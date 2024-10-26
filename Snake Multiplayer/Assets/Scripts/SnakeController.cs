@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class SnakeController : MonoBehaviour
@@ -8,17 +9,27 @@ public class SnakeController : MonoBehaviour
     private Vector3 moveDirection; // Stores the current direction of movement
     private bool isShielded = false;
     private int scoreMultiplier = 1;
-    public Sprite snakeBodySprite; // The sprite for the snake body
-    private List<GameObject> bodyParts = new List<GameObject>();
-
+    public GameObject bodyPartPrefab;
+    private List<Transform> bodyParts = new List<Transform>();
+    public int initialBodyParts = 3;
     public int Length => bodyParts.Count;
+
+    public delegate void BodyPartAddedHandler();
+    public event BodyPartAddedHandler OnBodyPartAdded;
+
+    public float bodyPartSpacing = 0.5f;
+
 
     void Start()
     {
+        
         // Set the snake's initial position to the center of the screen
         transform.position = new Vector3(93, 36, -39);
         moveDirection = Vector3.up;
-        AddBodyPart();
+        EnableBodyRenderers();
+        InitializeBody();
+        
+        //AddBodyPart();
     }
 
     void Update()
@@ -52,6 +63,29 @@ public class SnakeController : MonoBehaviour
         // Rotate the snake to face the direction of movement
         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle-90));
+        transform.rotation = Quaternion.Slerp(transform.rotation, transform.rotation, Time.deltaTime * 10);
+
+        // Update body parts' positions to follow the previous segments
+        for (int i = bodyParts.Count - 1; i > 0; i--)
+        {
+            bodyParts[i].position = bodyParts[i - 1].position; // Follow the part in front
+        }
+
+        // If there are body parts, set the first body part to follow the head's previous position
+        if (bodyParts.Count > 0)
+        {
+            //bodyParts[0].position = transform.position - (moveDirection.normalized * bodyPartSpacing); // First body part takes the head's previous position
+            bodyParts[0].position = bodyParts[bodyParts.Count - 1].position - (moveDirection.normalized * bodyPartSpacing);
+        }
+
+
+        // Move each body part to the position of the one in front of it
+        for (int i = 0; i < bodyParts.Count; i++)
+        {
+            Vector3 tempPosition = bodyParts[i].position;
+            bodyParts[i].position = transform.position;
+            transform.position = tempPosition;
+        }
     }
 
     public void ActivatePowerUp(PowerUpType type, float duration)
@@ -70,76 +104,113 @@ public class SnakeController : MonoBehaviour
         }
     }
 
-
-    public void GrowSnake(int amount)
+    private void InitializeBody()
     {
-        // Adjust the scale to match the snake head's scale
-        Vector3 headScale = transform.localScale; // Get the scale of the snake head
-        Vector3 bodyPartScale = new Vector3(headScale.x, headScale.y, headScale.z); // Set body part scale to match head
-
-        if (amount > 0)
+        Debug.Log("Initializing snake with " + initialBodyParts + " body parts.");
+        for (int i = 0; i < initialBodyParts; i++)
         {
-            for (int i = 0; i < amount; i++)
-            {
-                // Create a new GameObject for the body part
-                GameObject newBodyPart = new GameObject("SnakeBodyPart");
-                SpriteRenderer spriteRenderer = newBodyPart.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = snakeBodySprite; // Assign your body sprite here
-                newBodyPart.transform.localScale = bodyPartScale; // Set scale to match head
+            GrowSnake(1, initiallyHidden: true); // Add parts but keep them hidden
+        }
+    }
 
-                // Position the new body part behind the last part
+    private void EnableBodyRenderers()
+    {
+        foreach (Transform bodyPart in bodyParts)
+        {
+            SpriteRenderer renderer = bodyPart.GetComponent<SpriteRenderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = true; // Enable rendering after positioning
+            }
+        }
+    }
+
+    private void OnEnable()
+    {
+        OnBodyPartAdded += EnableBodyRenderers;
+    }
+
+    private void OnDisable()
+    {
+        OnBodyPartAdded -= EnableBodyRenderers;
+    }
+
+    //public void GrowSnake(int amount, bool initiallyHidden = false)
+    //{
+    //    for (int i = 0; i < Mathf.Abs(amount); i++)
+    //    {
+    //        if (amount > 0)
+    //        {
+    //            GameObject newPart = Instantiate(bodyPartPrefab);
+
+    //            // Position the new body part behind the last body part
+    //            if (bodyParts.Count > 0)
+    //            {
+    //                newPart.transform.position = bodyParts[bodyParts.Count - 1].position; // Position it at the last part's position
+    //            }
+    //            else
+    //            {
+    //                newPart.transform.position = transform.position; // Position it at the snake head if no parts exist
+    //            }
+
+    //            // Disable the renderer initially
+    //            SpriteRenderer renderer = newPart.GetComponent<SpriteRenderer>();
+    //            if (renderer != null)
+    //            {
+    //                renderer.enabled = initiallyHidden; // Keep it hidden initially
+    //            }
+
+    //            bodyParts.Add(newPart.transform); // Add to the body parts list
+    //            Debug.Log("Added body part. Total body parts: " + bodyParts.Count);
+    //        }
+    //        else if (bodyParts.Count > 0)
+    //        {
+    //            Destroy(bodyParts[bodyParts.Count - 1].gameObject);
+    //            bodyParts.RemoveAt(bodyParts.Count - 1);
+    //            Debug.Log("Removed body part. Total body parts: " + bodyParts.Count);
+    //        }
+    //    }
+    //}
+
+    public void GrowSnake(int amount, bool initiallyHidden = false)
+    {
+        for (int i = 0; i < Mathf.Abs(amount); i++)
+        {
+            if (amount > 0)
+            {
+                GameObject newPart = Instantiate(bodyPartPrefab);
+
+                // Position the new body part behind the last body part
                 if (bodyParts.Count > 0)
                 {
-                    newBodyPart.transform.position = bodyParts[bodyParts.Count - 1].transform.position;
+                    Transform lastBodyPart = bodyParts[bodyParts.Count - 1];
+                    newPart.transform.position = lastBodyPart.position - (moveDirection.normalized * bodyPartSpacing);
                 }
                 else
                 {
-                    newBodyPart.transform.position = transform.position; // Position at the head if no body parts exist
+                    // If no body parts exist, place it at the head's initial position
+                    newPart.transform.position = transform.position - (moveDirection.normalized * bodyPartSpacing);
                 }
 
-                bodyParts.Add(newBodyPart); // Add the new body part to the list
+                // Disable the renderer initially if needed
+                SpriteRenderer renderer = newPart.GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                {
+                    renderer.enabled = initiallyHidden;
+                }
+
+                bodyParts.Add(newPart.transform); // Add the new part to the body parts list
             }
-        }
-        else if (amount < 0 && bodyParts.Count > 1)
-        {
-            for (int i = 0; i < Mathf.Abs(amount) && bodyParts.Count > 1; i++)
+            else if (bodyParts.Count > 0)
             {
-                Destroy(bodyParts[bodyParts.Count - 1]);
+                // Remove a body part if shrinking
+                Destroy(bodyParts[bodyParts.Count - 1].gameObject);
                 bodyParts.RemoveAt(bodyParts.Count - 1);
             }
         }
     }
 
-    private void AddBodyPart()
-    {
-        // Create a new GameObject for the body part
-        GameObject newBodyPart = new GameObject("SnakeBodyPart");
-        SpriteRenderer spriteRenderer = newBodyPart.AddComponent<SpriteRenderer>();
 
-        // Assign the snake body sprite to the new body part
-        spriteRenderer.sprite = snakeBodySprite;
-
-        // Position the new body part at the end of the snake
-        if (bodyParts.Count > 0)
-        {
-            newBodyPart.transform.position = bodyParts[bodyParts.Count - 1].transform.position; // Position behind the last part
-        }
-        else
-        {
-            newBodyPart.transform.position = transform.position; // Start position for the first body part
-        }
-        newBodyPart.transform.localScale = transform.localScale;
-        bodyParts.Add(newBodyPart);
-        Debug.Log("Body Part added");
-    }
-
-    private void RemoveBodyPart()
-    {
-        GameObject lastPart = bodyParts[bodyParts.Count - 1];
-        bodyParts.RemoveAt(bodyParts.Count - 1);
-        Debug.Log("Body Part removed");
-        Destroy(lastPart); // Destroy the last body part
-    }
     private IEnumerator ActivateShield(float duration)
     {
         isShielded = true;
