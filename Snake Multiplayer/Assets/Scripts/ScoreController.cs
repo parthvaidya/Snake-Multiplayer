@@ -26,7 +26,7 @@ public class ScoreController : MonoBehaviour
         RefreshUI();
     }
 
-    private void RefreshUI()
+    public void RefreshUI()
     {
         scoreText.text = "Player A:" + score;
 

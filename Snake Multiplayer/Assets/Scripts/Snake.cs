@@ -10,6 +10,10 @@ public class Snake : MonoBehaviour
     private List<Transform> _segments;
     public Transform segmentPrefab;
     public ScoreController scoreController;
+    public float leftBoundary = -10f;   // Custom left boundary
+    public float rightBoundary = 10f;   // Custom right boundary
+    public float topBoundary = 5f;      // Custom top boundary
+    public float bottomBoundary = -5f;  // Custom bottom boundary
 
     private void Start()
     {
@@ -29,7 +33,7 @@ public class Snake : MonoBehaviour
         // Rotate the snake to face the direction of movement
         float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
-
+        WrapAroundScreen();
 
     }
     void Update()
@@ -56,10 +60,43 @@ public class Snake : MonoBehaviour
         
     }
 
+    void WrapAroundScreen()
+    {
+        Vector3 newPosition = transform.position;
 
+        // Check boundaries and wrap around using custom values
+        if (transform.position.y > topBoundary)         // Upper boundary
+        {
+            newPosition.y = bottomBoundary;
+        }
+        else if (transform.position.y < bottomBoundary) // Lower boundary
+        {
+            newPosition.y = topBoundary;
+        }
+
+        if (transform.position.x > rightBoundary)       // Right boundary
+        {
+            newPosition.x = leftBoundary;
+        }
+        else if (transform.position.x < leftBoundary)   // Left boundary
+        {
+            newPosition.x = rightBoundary;
+        }
+
+        // Update the position with wrapped coordinates
+        transform.position = newPosition;
+    }
     public void ResetState()
     {
+        for (int i = 1; i < _segments.Count; i++)
+        {
+            Destroy(_segments[i].gameObject);
+        }
 
+        _segments.Clear();
+        _segments.Add(this.transform);
+
+        this.transform.position = Vector3.zero;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -72,6 +109,7 @@ public class Snake : MonoBehaviour
         else if (collision.tag == "Obstacle")
         {
             ResetState();
+            //scoreController.RefreshUI();
         }
         
     }
@@ -82,7 +120,7 @@ public class Snake : MonoBehaviour
     public void Grow()
     {
         Transform segment = Instantiate(this.segmentPrefab);
-        segment.position = _segments[_segments.Count - 1].position;
+        segment.position = _segments[_segments.Count - 1].position ;
         _segments.Add(segment);
 
     }
