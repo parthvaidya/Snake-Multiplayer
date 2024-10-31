@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ScoreController : MonoBehaviour
 {
-    private TextMeshProUGUI scoreText;
+    public TextMeshProUGUI scoreText;
     private int score = 0;
 
     private void Awake()
@@ -17,6 +17,12 @@ public class ScoreController : MonoBehaviour
 
     private void Start()
     {
+
+        if (scoreText == null)
+        {
+            Debug.LogError("Score TextMeshProUGUI is not assigned in the inspector.");
+            return;
+        }
         RefreshUI();
     }
 
@@ -25,7 +31,11 @@ public class ScoreController : MonoBehaviour
         score += increment;
         RefreshUI();
     }
-
+    public void ResetScore()
+    {
+        score = 0;
+        RefreshUI();
+    }
     public void RefreshUI()
     {
         scoreText.text = "Player A:" + score;
