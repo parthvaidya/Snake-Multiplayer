@@ -1556,6 +1556,8 @@ MonoBehaviour:
     soundClip: {fileID: 8300000, guid: df6d1af64fdebb04d80a54b27b720509, type: 3}
   - soundType: 4
     soundClip: {fileID: 8300000, guid: 0651b56880a11ef45909b779443691aa, type: 3}
+  - soundType: 5
+    soundClip: {fileID: 8300000, guid: 9a6c7b4eb436659439202963a40d40d2, type: 3}
   soundEffect: {fileID: 1872112167}
   soundMusic: {fileID: 1056213106}
 --- !u!4 &1457413586

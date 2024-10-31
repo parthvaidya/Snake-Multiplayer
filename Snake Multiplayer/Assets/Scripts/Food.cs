@@ -25,6 +25,7 @@ public class Food : MonoBehaviour
         if(collision.gameObject.GetComponent<Rigidbody2D>() != null)
         {
             Debug.Log("Food pickeup");
+            SoundManager.Instance.Play(Sounds.collectItem);
             //scoreController.IncreaseScore(10);
             RandomizedPosition();
         }

@@ -40,7 +40,7 @@ public class LobbyController : MonoBehaviour
     {
         SoundManager.Instance.Play(Sounds.ButtonClick);
         // Load the scene with build index 2 (Scene number 2)
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
     }
 
 }
