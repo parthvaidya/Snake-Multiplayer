@@ -9,7 +9,7 @@ public class Snake : MonoBehaviour
     private Vector3 moveDirection;
     public Transform segmentPrefab;
     private List<Transform> _segments = new List<Transform>();
-    
+    public GameOverController gameOverController;
     public ScoreController scoreController;
     public float leftBoundary = -10f;   // Custom left boundary
     public float rightBoundary = 10f;   // Custom right boundary
@@ -144,11 +144,17 @@ public class Snake : MonoBehaviour
         {
             if (!shieldActive)  // Only reset if shield is not active
             {
-                ResetState();
+                gameOverController.SnakeDied();
                 scoreController.ResetScore();
+
             }
         }
-        
+        else if (collision.tag == "Test")
+        {
+            gameOverController.SnakeDied();
+        }
+
+
     }
 
 
