@@ -14,6 +14,7 @@ public class PowerUpController : MonoBehaviour
         Destroy(gameObject, Random.Range(5f, 10f));
     }
 
+    //randomize position
     private void RandomizedPosition()
     {
         Bounds bounds = this.gridArea.bounds;
@@ -22,29 +23,69 @@ public class PowerUpController : MonoBehaviour
 
         this.transform.position = new Vector3(Mathf.Round(x), Mathf.Round(y), 0.0f);
     }
+
+
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<TestSnakeLogic>()!=null)
+        if (collision.gameObject.GetComponent<TestSnakeLogic>()!=null )
         {
+            //choose powerups for snake A
             switch (powerUpType)
             {
                 case PowerUpType.Shield:
                     collision.GetComponent<TestSnakeLogic>().ActivateShield(cooldownDuration);
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    
                     Debug.Log("Shield Activated");
                     
                     break;
                 case PowerUpType.ScoreBoost:
                     collision.GetComponent<TestSnakeLogic>().ActivateScoreBoost(cooldownDuration);
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    
                     Debug.Log("ScoreBoost Activated");
                     
                     break;
                 case PowerUpType.SpeedUp:
                     collision.GetComponent<TestSnakeLogic>().ActivateSpeedUp(cooldownDuration);
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    
                     Debug.Log("Speed Increased Activated");
                     
                     break;
             }
-            //Destroy(gameObject);
+            
+            RandomizedPosition();
+        }
+
+        else if(collision.gameObject.GetComponent<SecondSnake>() != null)
+        {
+            switch (powerUpType)
+            {
+                //choose powerups for Snake B
+                case PowerUpType.Shield:
+                    
+                    collision.GetComponent<SecondSnake>().ActivateShield(cooldownDuration);
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    Debug.Log("Shield Activated");
+
+                    break;
+                case PowerUpType.ScoreBoost:
+                    
+                    collision.GetComponent<SecondSnake>().ActivateScoreBoost(cooldownDuration);
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    Debug.Log("ScoreBoost Activated");
+
+                    break;
+                case PowerUpType.SpeedUp:
+                    
+                    collision.GetComponent<SecondSnake>().ActivateSpeedUp(cooldownDuration);
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    Debug.Log("Speed Increased Activated");
+
+                    break;
+            }
+            
             RandomizedPosition();
         }
     }

@@ -24,7 +24,7 @@ public class Food : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.GetComponent<Rigidbody2D>() != null)
+        if(collision.gameObject.GetComponent<Rigidbody2D>() != null )
         {
             Debug.Log("Food pickeup");
             SoundManager.Instance.Play(Sounds.collectItem);

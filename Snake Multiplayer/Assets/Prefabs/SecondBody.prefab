@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 8806382780384588437}
   - component: {fileID: 1197043825688406258}
   m_Layer: 0
-  m_Name: SBody
-  m_TagString: Body
+  m_Name: SecondBody
+  m_TagString: BodyTwo
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -103,7 +103,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 86b8e3b998245624ea413863cf641a11, type: 3}
-  m_Color: {r: 0.9169811, g: 0.7941403, b: 0.7941403, a: 1}
+  m_Color: {r: 0.94716984, g: 0.8455264, b: 0.60583127, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

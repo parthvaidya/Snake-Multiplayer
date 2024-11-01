@@ -1,16 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class TestSnakeLogic : MonoBehaviour
+public class SecondSnake : MonoBehaviour
 {
     public float moveSpeed = 5f;
     private Vector2 _direction = Vector2.right;
     private List<Transform> _bodysegments;
     public Transform segmentPrefab;
     public GameOverController gameOverController;
-    public ScoreController scoreController;
+    public ScoreControllerTwo scoreController;
     public float leftBoundary = -10f;   // Custom left boundary
     public float rightBoundary = 10f;   // Custom right boundary
     public float topBoundary = 5f;      // Custom top boundary
@@ -26,6 +25,7 @@ public class TestSnakeLogic : MonoBehaviour
 
     private void Start()
     {
+        //Add segment at start
         _bodysegments = new List<Transform>();
         _bodysegments.Add(transform);
 
@@ -35,21 +35,23 @@ public class TestSnakeLogic : MonoBehaviour
         }
     }
 
+    //Key code to control
     private void Update()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.W))
         {
             _direction = Vector2.up;
         }
-        else if (Input.GetKey(KeyCode.DownArrow))
+        else if (Input.GetKey(KeyCode.S))
         {
             _direction = Vector2.down;
         }
-        else if (Input.GetKey(KeyCode.LeftArrow))
+        else if (Input.GetKey(KeyCode.A))
+
         {
             _direction = Vector2.left;
         }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        else if (Input.GetKey(KeyCode.D))
         {
             _direction = Vector2.right;
         }
@@ -57,7 +59,7 @@ public class TestSnakeLogic : MonoBehaviour
 
     private void FixedUpdate()
     {
-
+        //Add snake segment at last
         for (int i = _bodysegments.Count - 1; i > 0; i--)
         {
             _bodysegments[i].position = _bodysegments[i - 1].position;
@@ -113,6 +115,7 @@ public class TestSnakeLogic : MonoBehaviour
     }
     public void Growing()
     {
+        //The snake grows
         Transform segment = Instantiate(this.segmentPrefab);
         segment.position = _bodysegments[_bodysegments.Count - 1].position;
         _bodysegments.Add(segment);
@@ -123,6 +126,9 @@ public class TestSnakeLogic : MonoBehaviour
 
         if (collision.tag == "Food")
         {
+
+            //Food and score boosters
+
             Growing();
             int scoreIncrease = scoreBoostActive ? 2 : 1;
             scoreController.IncreaseScore(scoreIncrease);
@@ -140,37 +146,41 @@ public class TestSnakeLogic : MonoBehaviour
         {
             gameOverController.SnakeDied();
         }
+        else if (collision.tag == "BodyTwo")
+        {
+            if (!shieldActive)  // Only reset if shield is not active
+            {
+                gameOverController.SnakeDied();
+                scoreController.ResetScore();
+            }
+        }
 
-        
+        else if (collision.tag == "Player2")
+        {
+            if (!shieldActive)  // Only reset if shield is not active
+            {
+                gameOverController.SnakeDied();
+                scoreController.ResetScore();
+            }
+        }
+        else if (collision.tag == "Player")
+        {
+            if (!shieldActive)  // Only reset if shield is not active
+            {
+                gameOverController.SnakeDied();
+                scoreController.ResetScore();
+
+            }
+            }
         else if (collision.tag == "Body")
         {
             if (!shieldActive)  // Only reset if shield is not active
             {
                 gameOverController.SnakeDied();
                 scoreController.ResetScore();
-            }
-                
-        }
-        else if (collision.tag == "Player2")
-        {
 
-            if (!shieldActive)  // Only reset if shield is not active
-            {
-                gameOverController.SnakeDied();
-                scoreController.ResetScore();
             }
         }
-
-        else if (collision.tag == "BodyTwo")
-        {
-
-            if (!shieldActive)  // Only reset if shield is not active
-            {
-                gameOverController.SnakeDied();
-                scoreController.ResetScore();
-            }
-        }
-
 
     }
 
@@ -213,6 +223,4 @@ public class TestSnakeLogic : MonoBehaviour
         yield return new WaitForSeconds(duration);
         deactivateAction();
     }
-
-
 }

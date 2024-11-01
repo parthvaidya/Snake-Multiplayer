@@ -8,6 +8,8 @@ TagManager:
   - Obstacle
   - Test
   - Body
+  - Player2
+  - BodyTwo
   layers:
   - Default
   - TransparentFX

@@ -29,13 +29,15 @@ public class FoodsType : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        //Snake snake = collision.GetComponent<Snake>(); 
+        
         TestSnakeLogic snake = collision.GetComponent<TestSnakeLogic>();
+        SecondSnake secondsnake = collision.GetComponent<SecondSnake>();
 
         if (snake != null) 
         {
             if (foody == Foody.MassGainer)
             {
+                SoundManager.Instance.Play(Sounds.collectItem);
                 snake.Growing();
                 
                
@@ -43,17 +45,48 @@ public class FoodsType : MonoBehaviour
             }
             else if (foody == Foody.MassBurner)
             {
-                if (snake.CurrentLength > 1)  
+                if (snake.CurrentLength > 1 )  
                 {
+                    SoundManager.Instance.Play(Sounds.collectItem);
                     snake.Shrink();
+                    
                     Debug.Log("Mass Burner collected. Snake shrank.");
                 }
                 else
                 {
+                    SoundManager.Instance.Play(Sounds.collectItem);
                     Debug.Log("Mass Burner collected but snake too small to shrink.");
                 }
             }
             RandomizedPosition();
+        }
+
+        else if(secondsnake!=null) {
+            if (foody == Foody.MassGainer)
+            {
+                SoundManager.Instance.Play(Sounds.collectItem);
+                secondsnake.Growing();
+
+
+                Debug.Log($"Mass Gainer collected");
+            }
+            else if (foody == Foody.MassBurner)
+            {
+                if (secondsnake.CurrentLength > 1)
+                {
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    secondsnake.Shrink();
+
+                    Debug.Log("Mass Burner collected. Snake shrank.");
+                }
+                else
+                {
+                    SoundManager.Instance.Play(Sounds.collectItem);
+                    Debug.Log("Mass Burner collected but snake too small to shrink.");
+                }
+            }
+            RandomizedPosition();
+
         }
     }
 
