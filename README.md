@@ -10,3 +10,5 @@ You have a snake which can move in all 4 directions Snake Eats Apple so make sur
  A two-player game where one sneak will move using WASD and another will move using arrow keys.
  If Snake A bites snake B then snake B will die, and vice versa.
 
+ # Also the Snake to score 15 points first wins the game!!!
+
