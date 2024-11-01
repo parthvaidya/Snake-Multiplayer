@@ -24,24 +24,28 @@ public class PowerUpController : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<Snake>()!=null)
+        if (collision.gameObject.GetComponent<TestSnakeLogic>()!=null)
         {
             switch (powerUpType)
             {
                 case PowerUpType.Shield:
-                    collision.GetComponent<Snake>().ActivateShield(cooldownDuration);
+                    collision.GetComponent<TestSnakeLogic>().ActivateShield(cooldownDuration);
                     Debug.Log("Shield Activated");
+                    
                     break;
                 case PowerUpType.ScoreBoost:
-                    collision.GetComponent<Snake>().ActivateScoreBoost(cooldownDuration);
+                    collision.GetComponent<TestSnakeLogic>().ActivateScoreBoost(cooldownDuration);
                     Debug.Log("ScoreBoost Activated");
+                    
                     break;
                 case PowerUpType.SpeedUp:
-                    collision.GetComponent<Snake>().ActivateSpeedUp(cooldownDuration);
+                    collision.GetComponent<TestSnakeLogic>().ActivateSpeedUp(cooldownDuration);
                     Debug.Log("Speed Increased Activated");
+                    
                     break;
             }
-            Destroy(gameObject);
+            //Destroy(gameObject);
+            RandomizedPosition();
         }
     }
 }

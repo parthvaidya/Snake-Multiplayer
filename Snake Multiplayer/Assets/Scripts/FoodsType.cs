@@ -29,13 +29,14 @@ public class FoodsType : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Snake snake = collision.GetComponent<Snake>();
+        //Snake snake = collision.GetComponent<Snake>(); 
+        TestSnakeLogic snake = collision.GetComponent<TestSnakeLogic>();
 
         if (snake != null) 
         {
             if (foody == Foody.MassGainer)
             {
-                snake.Grow();
+                snake.Growing();
                 
                
                 Debug.Log($"Mass Gainer collected");

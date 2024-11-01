@@ -7,6 +7,7 @@ TagManager:
   - Food
   - Obstacle
   - Test
+  - Body
   layers:
   - Default
   - TransparentFX

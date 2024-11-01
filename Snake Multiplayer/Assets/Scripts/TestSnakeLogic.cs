@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Snake : MonoBehaviour
+public class TestSnakeLogic : MonoBehaviour
 {
-    public float moveSpeed = 5f; // Speed at which the snake moves
-    private Vector3 moveDirection;
+    public float moveSpeed = 5f;
+    private Vector2 _direction = Vector2.right;
+    private List<Transform> _bodysegments;
     public Transform segmentPrefab;
-    private List<Transform> _segments = new List<Transform>();
     public GameOverController gameOverController;
     public ScoreController scoreController;
     public float leftBoundary = -10f;   // Custom left boundary
@@ -23,79 +23,58 @@ public class Snake : MonoBehaviour
     private bool shieldActive = false;
     public bool scoreBoostActive = false;
     private bool speedUpActive = false;
+
     private void Start()
     {
-        moveDirection = Vector3.up;
-        _segments = new List<Transform>();
-        _segments.Add(this.transform);
-
+        _bodysegments = new List<Transform>();
+        _bodysegments.Add(transform);
 
         if (GetComponent<Collider2D>() == null)
         {
             gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
         }
     }
-    void FixedUpdate()
+
+    private void Update()
     {
-        // Move the head of the snake
-        transform.position += moveDirection * moveSpeed * Time.deltaTime;
-
-        // Rotate the snake to face the direction of movement
-        float angle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
-
-        // Move the body segments
-        for (int i = _segments.Count - 1; i > 0; i--)
+        if (Input.GetKey(KeyCode.UpArrow))
         {
-            _segments[i].position = _segments[i - 1].position;
+            _direction = Vector2.up;
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            _direction = Vector2.down;
+        }
+        else if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            _direction = Vector2.left;
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            _direction = Vector2.right;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+
+        for (int i = _bodysegments.Count - 1; i > 0; i--)
+        {
+            _bodysegments[i].position = _bodysegments[i - 1].position;
         }
 
-
+        this.transform.position = new Vector3(
+            Mathf.Round(this.transform.position.x) + _direction.x,
+            Mathf.Round(this.transform.position.y) + _direction.y,
+            0.0f);
 
 
         WrapAroundScreen();
-        
-
-        //for (int i = 1; i < _segments.Count; i++)
-        //{
-        //    if (Vector3.Distance(transform.position, _segments[i].position) < 0.1f)
-        //    {
-        //        ResetState();  // Resets the game state
-        //        scoreController.ResetScore();
-        //        break;
-        //    }
-        //}
     }
 
     public bool IsScoreBoostActive => scoreBoostActive; // Getter for scoreBoostActive
 
-    public int CurrentLength => _segments.Count;
-    void Update()
-    {
-        // Detect key inputs for movement
-        UpdateMoveDirection();
-    }
-
-    void UpdateMoveDirection()
-    {
-        if (Input.GetKey(KeyCode.UpArrow))
-        {
-            moveDirection = Vector3.up;
-        }
-        else if (Input.GetKey(KeyCode.DownArrow))
-        {
-            moveDirection = Vector3.down;
-        }
-        else if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            moveDirection = Vector3.left;
-        }
-        else if (Input.GetKey(KeyCode.RightArrow))
-        {
-            moveDirection = Vector3.right;
-        }
-    }
-
+    public int CurrentLength => _bodysegments.Count;
     void WrapAroundScreen()
     {
         Vector3 newPosition = transform.position;
@@ -124,20 +103,27 @@ public class Snake : MonoBehaviour
 
     public void ResetState()
     {
-        for (int i = 1; i < _segments.Count; i++)
+        for (int i = 1; i < _bodysegments.Count; i++)
         {
-            Destroy(_segments[i].gameObject);
+            Destroy(_bodysegments[i].gameObject);
         }
-        _segments.Clear();
-        _segments.Add(this.transform);
+        _bodysegments.Clear();
+        _bodysegments.Add(this.transform);
         this.transform.position = Vector3.zero;
     }
+    public void Growing()
+    {
+        Transform segment = Instantiate(this.segmentPrefab);
+        segment.position = _bodysegments[_bodysegments.Count - 1].position;
+        _bodysegments.Add(segment);
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        if(collision.tag == "Food")
+        if (collision.tag == "Food")
         {
-            Grow();
+            Growing();
             int scoreIncrease = scoreBoostActive ? 2 : 1;
             scoreController.IncreaseScore(scoreIncrease);
         }
@@ -156,51 +142,20 @@ public class Snake : MonoBehaviour
         }
         else if (collision.tag == "Body")
         {
-            CheckSelfCollision();
+            
             gameOverController.SnakeDied();
             scoreController.ResetScore();
         }
-
-
     }
-
-    private void CheckSelfCollision()
-    {
-        // Start checking from the fourth segment to avoid false collisions with nearby segments
-        for (int i = 4; i < _segments.Count; i++)
-        {
-            float distance = Vector3.Distance(transform.position, _segments[i].position);
-            if (distance < 0.5f)
-            {
-                gameOverController.SnakeDied();
-                scoreController.ResetScore();
-                return;
-            }
-        }
-    }
-
-
-
-    public void Grow()
-    {
-        Transform segment = Instantiate(this.segmentPrefab);
-        segment.position = _segments[_segments.Count - 1].position;
-        segment.position -= moveDirection * 0.5f;
-        
-        _segments.Add(segment);
-        
-    }
-
-    
 
     public void Shrink()
     {
-        if (_segments.Count > 1)
+        if (_bodysegments.Count > 1)
         {
-            Transform lastSegment = _segments[_segments.Count - 1];
-            _segments.RemoveAt(_segments.Count - 1);
+            Transform lastSegment = _bodysegments[_bodysegments.Count - 1];
+            _bodysegments.RemoveAt(_bodysegments.Count - 1);
             Destroy(lastSegment.gameObject);
-            Debug.Log($"Snake shrank. Current length: {_segments.Count}");
+            Debug.Log($"Snake shrank. Current length: {_bodysegments.Count}");
         }
     }
 
@@ -232,5 +187,6 @@ public class Snake : MonoBehaviour
         yield return new WaitForSeconds(duration);
         deactivateAction();
     }
+
 
 }
