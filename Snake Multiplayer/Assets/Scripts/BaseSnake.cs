@@ -48,6 +48,8 @@ public class BaseSnake : MonoBehaviour
         WrapAroundScreen();
     }
 
+
+
     public bool IsScoreBoostActive => scoreBoostActive;
 
     public int CurrentLength => _bodysegments.Count;
@@ -87,10 +89,15 @@ public class BaseSnake : MonoBehaviour
         this.transform.position = Vector3.zero;
     }
 
+    
+
     public void Growing()
     {
         Transform segment = Instantiate(segmentPrefab);
-        segment.position = _bodysegments[_bodysegments.Count - 1].position;
+        Vector3 lastSegmentPosition = _bodysegments[_bodysegments.Count - 1].position;
+
+        // Offset the new segment slightly to ensure no gap
+        segment.position = lastSegmentPosition - new Vector3(0, 0.2f, 0); // Adjust the offset as needed
         _bodysegments.Add(segment);
     }
 
@@ -135,6 +142,6 @@ public class BaseSnake : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        // To be extended in subclasses
+       
     }
 }

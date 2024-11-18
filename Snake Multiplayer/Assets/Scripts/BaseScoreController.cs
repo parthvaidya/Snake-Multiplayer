@@ -32,7 +32,7 @@ public class BaseScoreController : MonoBehaviour
 
         if (score >= 15)
         {
-            SceneManager.LoadScene(4); // Ensure scene 4 is set in build settings
+            SceneManager.LoadScene(4); 
         }
     }
 
