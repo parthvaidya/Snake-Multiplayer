@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 
 public class TypeOfFoodsController : MonoBehaviour
 {
+   
     [SerializeField] private Foody foody;
     [SerializeField] private BoxCollider2D gridArea;
-    [SerializeField] private ScoreController scoreController;
+    private ScoreController scoreController;
+
     private void Start()
     {
         RandomizedPosition();
@@ -25,67 +28,52 @@ public class TypeOfFoodsController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
         FirstSnake snake = collision.GetComponent<FirstSnake>();
-        SecondSnake secondsnake = collision.GetComponent<SecondSnake>();
+        SecondSnake secondSnake = collision.GetComponent<SecondSnake>();
 
-        if (snake != null) 
+        if (snake != null)
         {
-            if (foody == Foody.MassGainer)
-            {
-                SoundManager.Instance.Play(Sounds.collectItem);
-                snake.Growing();
-                
-               
-                Debug.Log($"Mass Gainer collected");
-            }
-            else if (foody == Foody.MassBurner)
-            {
-                if (snake.CurrentLength > 1 )  
-                {
-                    SoundManager.Instance.Play(Sounds.collectItem);
-                    snake.Shrink();
-                    
-                    Debug.Log("Mass Burner collected. Snake shrank.");
-                }
-                else
-                {
-                    SoundManager.Instance.Play(Sounds.collectItem);
-                    Debug.Log("Mass Burner collected but snake too small to shrink.");
-                }
-            }
-            RandomizedPosition();
+            HandleFoodCollection(snake);
         }
-
-        else if(secondsnake!=null) {
-            if (foody == Foody.MassGainer)
-            {
-                SoundManager.Instance.Play(Sounds.collectItem);
-                secondsnake.Growing();
-
-
-                Debug.Log($"Mass Gainer collected");
-            }
-            else if (foody == Foody.MassBurner)
-            {
-                if (secondsnake.CurrentLength > 1)
-                {
-                    SoundManager.Instance.Play(Sounds.collectItem);
-                    secondsnake.Shrink();
-
-                    Debug.Log("Mass Burner collected. Snake shrank.");
-                }
-                else
-                {
-                    SoundManager.Instance.Play(Sounds.collectItem);
-                    Debug.Log("Mass Burner collected but snake too small to shrink.");
-                }
-            }
-            RandomizedPosition();
-
+        else if (secondSnake != null)
+        {
+            HandleFoodCollection(secondSnake);
         }
     }
 
-}
+    private void HandleFoodCollection(ISnake snake)
+    {
+        if (foody == Foody.MassGainer)
+        {
+            SoundManager.Instance.Play(Sounds.collectItem);
+            snake.Growing();
+            Debug.Log("Mass Gainer collected");
+        }
+        else if (foody == Foody.MassBurner)
+        {
+            if (snake.CurrentLength > 1)
+            {
+                SoundManager.Instance.Play(Sounds.collectItem);
+                snake.Shrink();
+                Debug.Log("Mass Burner collected. Snake shrank.");
+            }
+            else
+            {
+                SoundManager.Instance.Play(Sounds.collectItem);
+                Debug.Log("Mass Burner collected but snake too small to shrink.");
+            }
+        }
+        RandomizedPosition();
+    }
 
+}
+public interface ISnake
+{
+    void ActivateShield(float duration);
+    void ActivateScoreBoost(float duration);
+    void ActivateSpeedUp(float duration);
+    int CurrentLength { get; }
+    void Growing();
+    void Shrink();
+}
 

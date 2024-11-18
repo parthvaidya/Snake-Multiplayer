@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SecondSnake : BaseSnake
+public class SecondSnake : BaseSnake, ISnake
 {
     //public float moveSpeed = 5f;
     //private Vector2 _direction = Vector2.right;
