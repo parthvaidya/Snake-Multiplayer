@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PowerUpController : MonoBehaviour
 {
-    public PowerUpType powerUpType; // Set this in Inspector for each power-up prefab
-    public float cooldownDuration = 3f; // Flexible cooldown duration
-    public BoxCollider2D gridArea;
+    [SerializeField] private PowerUpType powerUpType; // Set this in Inspector for each power-up prefab
+    [SerializeField] private float cooldownDuration = 3f; // Flexible cooldown duration
+    [SerializeField] private BoxCollider2D gridArea;
     void Start()
     {
         RandomizedPosition();
@@ -17,37 +17,33 @@ public class PowerUpController : MonoBehaviour
     //randomize position
     private void RandomizedPosition()
     {
-        Bounds bounds = this.gridArea.bounds;
-        float x = Random.Range(bounds.min.x, bounds.max.x);
-        float y = Random.Range(bounds.min.y, bounds.max.y);
-
-        this.transform.position = new Vector3(Mathf.Round(x), Mathf.Round(y), 0.0f);
+        this.transform.position = RandomizedPositionUtility.GetRandomPosition(gridArea);
     }
 
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<TestSnakeLogic>()!=null )
+        if (collision.gameObject.GetComponent<FirstSnake>()!=null )
         {
             //choose powerups for snake A
             switch (powerUpType)
             {
                 case PowerUpType.Shield:
-                    collision.GetComponent<TestSnakeLogic>().ActivateShield(cooldownDuration);
+                    collision.GetComponent<FirstSnake>().ActivateShield(cooldownDuration);
                     SoundManager.Instance.Play(Sounds.collectItem);
                     
                     Debug.Log("Shield Activated");
                     
                     break;
                 case PowerUpType.ScoreBoost:
-                    collision.GetComponent<TestSnakeLogic>().ActivateScoreBoost(cooldownDuration);
+                    collision.GetComponent<FirstSnake>().ActivateScoreBoost(cooldownDuration);
                     SoundManager.Instance.Play(Sounds.collectItem);
                     
                     Debug.Log("ScoreBoost Activated");
                     
                     break;
                 case PowerUpType.SpeedUp:
-                    collision.GetComponent<TestSnakeLogic>().ActivateSpeedUp(cooldownDuration);
+                    collision.GetComponent<FirstSnake>().ActivateSpeedUp(cooldownDuration);
                     SoundManager.Instance.Play(Sounds.collectItem);
                     
                     Debug.Log("Speed Increased Activated");
@@ -91,4 +87,4 @@ public class PowerUpController : MonoBehaviour
     }
 }
 
-public enum PowerUpType { Shield, ScoreBoost, SpeedUp }
+

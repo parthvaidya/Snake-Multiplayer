@@ -1051,6 +1051,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 0}
+  playerName: Player
 --- !u!1001 &834635550
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1690,7 +1691,7 @@ GameObject:
   - component: {fileID: 1423066384}
   m_Layer: 0
   m_Name: SnakeA
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1846,16 +1847,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ecd7587d1651f241b062f7e03d550d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 1
   segmentPrefab: {fileID: 8980998304198656947, guid: 2cf965ecdf996c14aa22db0bf84a671c, type: 3}
   gameOverController: {fileID: 1360530894}
-  scoreController: {fileID: 1953900643}
   leftBoundary: -10
   rightBoundary: 10
   topBoundary: 5
   bottomBoundary: -5
-  growthSize: 0.2
-  scoreBoostActive: 0
+  scoreController: {fileID: 1953900643}
 --- !u!1 &1518458157
 GameObject:
   m_ObjectHideFlags: 0
@@ -2341,13 +2340,11 @@ MonoBehaviour:
   moveSpeed: 5
   segmentPrefab: {fileID: 8980998304198656947, guid: 984ad33c4ce7d194d8a4a79f148d9d80, type: 3}
   gameOverController: {fileID: 1360530894}
-  scoreController: {fileID: 762365940}
   leftBoundary: -10
   rightBoundary: 10
   topBoundary: 5
   bottomBoundary: -5
-  growthSize: 0.2
-  scoreBoostActive: 0
+  scoreController: {fileID: 762365940}
 --- !u!1 &1655083490
 GameObject:
   m_ObjectHideFlags: 0
@@ -3003,6 +3000,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 0}
+  playerName: Player
 --- !u!1 &1998372319
 GameObject:
   m_ObjectHideFlags: 0

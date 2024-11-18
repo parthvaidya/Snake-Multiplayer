@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class ModeSelectionController : MonoBehaviour
 {
-    public Button singlePlayerButton; // Button for single-player mode
-    public Button multiPlayerButton;  // Button for multiplayer mode
-    public GameObject modeSelectionPopup; // The popup UI
+    [SerializeField] private Button singlePlayerButton; // Button for single-player mode
+    [SerializeField] private Button multiPlayerButton;  // Button for multiplayer mode
+    [SerializeField] private GameObject modeSelectionPopup; // The popup UI
 
     void Start()
     {
@@ -20,14 +20,14 @@ public class ModeSelectionController : MonoBehaviour
         multiPlayerButton.onClick.AddListener(StartMultiPlayer);
     }
 
-    public void ShowPopup()
+    private void ShowPopup()
     {
         Debug.Log("ShowPopup called");  // Log when popup is called
         modeSelectionPopup.SetActive(true);  // Show the popup
         modeSelectionPopup.transform.SetAsLastSibling();  // Ensure the popup appears on top of other UI elements
     }
 
-    public void HidePopup()
+    private void HidePopup()
     {
         modeSelectionPopup.SetActive(false); // Hide the popup
     }
