@@ -4,46 +4,19 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ScoreControllerTwo : MonoBehaviour
+public class ScoreControllerTwo : BaseScoreController
 {
-    public TextMeshProUGUI scoreText;
-    private int score = 0;
-
-    private void Awake()
+    private new void Start()
     {
-        scoreText = GetComponent<TextMeshProUGUI>();
-
+        playerName = "Player B"; // Assign specific player name
+        base.Start(); // Call base class Start to initialize UI
     }
 
-    private void Start()
+    public override void IncreaseScore(int increment)
     {
-
-        if (scoreText == null)
-        {
-            Debug.LogError("Score TextMeshProUGUI is not assigned in the inspector.");
-            return;
-        }
-        RefreshUI();
+        base.IncreaseScore(increment); // Use the base method to increase the score and update the UI
     }
 
-    public void IncreaseScore(int increment)
-    {
-        score += increment;
-        RefreshUI();
-    }
-    public void ResetScore()
-    {
-        score = 0;
-        RefreshUI();
 
-        if (score >= 15)
-        {
-            SceneManager.LoadScene(4); 
-        }
-    }
-    public void RefreshUI()
-    {
-        scoreText.text = "Player B:" + score;
-
-    }
+    
 }

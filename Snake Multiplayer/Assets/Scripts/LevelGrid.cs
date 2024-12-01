@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class LevelGrid : MonoBehaviour
 {
-    public float xBoundary = 100f; // Adjust this to match the game area
-    public float yBoundary = 100f;
+    [SerializeField] private float xBoundary = 100f; // Adjust this to match the game area
+    [SerializeField] private float yBoundary = 100f;
 
     void Update()
     {

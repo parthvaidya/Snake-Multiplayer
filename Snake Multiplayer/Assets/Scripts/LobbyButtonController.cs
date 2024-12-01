@@ -7,11 +7,11 @@ using UnityEngine.UI;
 public class LobbyController : MonoBehaviour
 {
 
-    public Button startButton;
-    public Button quitButton;
-    public Button chooseMode;
-    public ModeSelectionController modeSelectionController;
-    public GameObject modeSelectionPopup;
+    [SerializeField] private Button startButton;
+    [SerializeField] private Button quitButton;
+    [SerializeField] private Button chooseMode;
+    [SerializeField] private ModeSelectionController modeSelectionController;
+    [SerializeField] private GameObject modeSelectionPopup;
 
     void Start()
     {
@@ -22,21 +22,21 @@ public class LobbyController : MonoBehaviour
         modeSelectionPopup.SetActive(false);
 
     }
-    public void StartGame()
+    private void StartGame()
     {
         // Load the scene with build index 1 (Scene number 1)
         SoundManager.Instance.Play(Sounds.ButtonClick);
         SceneManager.LoadScene(1);
     }
 
-    public void ChooseMode()
+    private void ChooseMode()
     {
         SoundManager.Instance.Play(Sounds.ButtonClick);
         modeSelectionPopup.SetActive(true);
         //modeSelectionController.ShowPopup();
     }
     // Method to handle Quit Button Click
-    public void QuitGame()
+    private void QuitGame()
     {
         SoundManager.Instance.Play(Sounds.ButtonClick);
         // Load the scene with build index 2 (Scene number 2)
